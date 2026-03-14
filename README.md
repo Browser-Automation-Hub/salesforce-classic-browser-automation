@@ -253,6 +253,38 @@ await withAnchorBrowser(async (page) => {
 
 ---
 
+## Known Selectors Reference
+
+> These CSS selectors were observed in Salesforce Classic web interfaces. Enterprise applications update their UIs — verify against your specific instance and submit PRs when selectors break.
+
+| Element | Selector | Notes |
+|---------|----------|-------|
+| Login: username | `#username` | Login form |
+| Login: password | `#password` | Login form |
+| Login: submit | `#Login` | Login form |
+| Login: mfa code | `#smc` | Login form |
+| create lead: new lead url | `/00Q/e` | |
+| create lead: first name | `#name_firstlea2` | |
+| create lead: last name | `#name_lastlea2` | |
+| create lead: email | `#email` | |
+| create lead: company | `#company` | |
+| create lead: save btn | `#bottomButtonRow input[name="save"]` | |
+| update opportunity: search opp | `#phSearchInput input` | |
+| update opportunity: opp row | `.dataRow .actionColumn a` | |
+| update opportunity: stage dropdown | `#opp12` | |
+| update opportunity: close date | `#closedate` | |
+| update opportunity: save btn | `input[name="save"][value="Save"]` | |
+| run report: reports tab | `a[title="Reports Tab"]` | |
+| run report: report row | `.ReportName a` | |
+| run report: export xls | `#export_btn` | |
+| mass update records: list view | `.listViewport` | |
+| mass update records: select all | `#cbAll` | |
+| mass update records: mass update btn | `input[value*="Update"]` | |
+
+> ⚠️ Selectors are best-effort. Run `node src/utils.js --verify-selectors` to test against your instance.
+
+---
+
 ## More Browser Automation Projects
 
 This is part of the **[Browser Automation Hub](https://github.com/Browser-Automation-Hub)** — a collection of open-source browser automation scaffolds for systems with poor or no API support:
