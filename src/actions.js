@@ -21,27 +21,24 @@ async function login_salesforce(page, opts = {}) {
 
   return retry(async () => {
     await humanDelay(500, 1500);
-
-    // TODO: Replace selectors with actual Salesforce Classic selectors
-    // These are placeholder implementations — inspect the actual UI
-    // and update the selectors accordingly.
-
     try {
-      // Example: navigate to the relevant section
-      // await page.goto(`${process.env.SALESFORCE_CLASSIC_URL}/path/to/login-salesforce`);
-      // await page.waitForSelector('.main-content, #content, [data-testid="loaded"]', { timeout: 15000 });
-
-      // Extract or interact with data
-      const result = await page.evaluate(() => {
-        // DOM extraction placeholder
-        return { status: 'ok', data: null };
-      });
-
-      log('login_salesforce complete', result);
-      return result;
-
+      await page.goto('https://login.salesforce.com', { waitUntil: 'networkidle2' });
+    await page.waitForSelector('#username, input[name="username"]', { timeout: 15000 });
+    await page.type('#username', process.env.SALESFORCE_CLASSIC_USERNAME);
+    await page.type('#password', process.env.SALESFORCE_CLASSIC_PASSWORD);
+    await page.click('#Login, input[type="submit"][id="Login"]');
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 });
+    // Handle MFA if prompted
+    const mfaField = await page.$('#smc, input[name="smc"]');
+    if (mfaField) {
+      const code = generateTOTP(process.env.MFA_SECRET);
+      await mfaField.type(code);
+      await page.keyboard.press('Enter');
+      await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 });
+    }
+    await page.waitForSelector('#userNavButton, .bPageHeader, #phSearchDiv', { timeout: 20000 });
+    return { status: 'logged_in', url: page.url() };
     } catch (err) {
-      // Take screenshot on error for debugging
       await page.screenshot({ path: `error-login_salesforce-${Date.now()}.png` }).catch(() => {});
       throw err;
     }
@@ -61,27 +58,21 @@ async function create_lead(page, opts = {}) {
 
   return retry(async () => {
     await humanDelay(500, 1500);
-
-    // TODO: Replace selectors with actual Salesforce Classic selectors
-    // These are placeholder implementations — inspect the actual UI
-    // and update the selectors accordingly.
-
     try {
-      // Example: navigate to the relevant section
-      // await page.goto(`${process.env.SALESFORCE_CLASSIC_URL}/path/to/create-lead`);
-      // await page.waitForSelector('.main-content, #content, [data-testid="loaded"]', { timeout: 15000 });
-
-      // Extract or interact with data
-      const result = await page.evaluate(() => {
-        // DOM extraction placeholder
-        return { status: 'ok', data: null };
-      });
-
-      log('create_lead complete', result);
-      return result;
-
+      const BASE_URL = process.env.SALESFORCE_CLASSIC_URL || 'https://na.salesforce.com';
+    await page.goto(`${BASE_URL}/00Q/e?retURL=%2F00Q%2Fi`, { waitUntil: 'networkidle2' });
+    await page.waitForSelector('#name_lastlea2, input[name="name_lastlea2"]', { timeout: 15000 });
+    if (opts.firstName) await page.type('#name_firstlea2, input[name="name_firstlea2"]', opts.firstName);
+    await page.type('#name_lastlea2, input[name="name_lastlea2"]', opts.lastName || opts.name || '');
+    if (opts.email) await page.type('#email, input[name="email"]', opts.email);
+    if (opts.company) await page.type('#company, input[name="company"]', opts.company);
+    if (opts.phone) await page.type('#phone, input[name="phone"]', opts.phone);
+    if (opts.leadSource) await page.select('#lead_source, select[name="LeadSource"]', opts.leadSource);
+    await page.click('#bottomButtonRow input[name="save"], #topButtonRow input[name="save"]');
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 });
+    const leadId = page.url().match(/\/([0-9A-Za-z]{15,18})/)?.[1];
+    return { status: 'created', leadId, url: page.url() };
     } catch (err) {
-      // Take screenshot on error for debugging
       await page.screenshot({ path: `error-create_lead-${Date.now()}.png` }).catch(() => {});
       throw err;
     }
@@ -101,27 +92,16 @@ async function update_opportunity(page, opts = {}) {
 
   return retry(async () => {
     await humanDelay(500, 1500);
-
-    // TODO: Replace selectors with actual Salesforce Classic selectors
-    // These are placeholder implementations — inspect the actual UI
-    // and update the selectors accordingly.
-
     try {
-      // Example: navigate to the relevant section
-      // await page.goto(`${process.env.SALESFORCE_CLASSIC_URL}/path/to/update-opportunity`);
-      // await page.waitForSelector('.main-content, #content, [data-testid="loaded"]', { timeout: 15000 });
-
-      // Extract or interact with data
-      const result = await page.evaluate(() => {
-        // DOM extraction placeholder
-        return { status: 'ok', data: null };
-      });
-
-      log('update_opportunity complete', result);
-      return result;
-
+      // TODO: Replace with actual Salesforce Classic selectors
+    // await page.goto(`${process.env.SALESFORCE_CLASSIC_URL}/path/to/update-opportunity`);
+    // await page.waitForSelector('.main-content, #content, [data-testid="loaded"]', { timeout: 15000 });
+    const result = await page.evaluate(() => {
+      return { status: 'ok', data: null };
+    });
+    log('update_opportunity complete', result);
+    return result;
     } catch (err) {
-      // Take screenshot on error for debugging
       await page.screenshot({ path: `error-update_opportunity-${Date.now()}.png` }).catch(() => {});
       throw err;
     }
@@ -141,27 +121,24 @@ async function run_report(page, opts = {}) {
 
   return retry(async () => {
     await humanDelay(500, 1500);
-
-    // TODO: Replace selectors with actual Salesforce Classic selectors
-    // These are placeholder implementations — inspect the actual UI
-    // and update the selectors accordingly.
-
     try {
-      // Example: navigate to the relevant section
-      // await page.goto(`${process.env.SALESFORCE_CLASSIC_URL}/path/to/run-report`);
-      // await page.waitForSelector('.main-content, #content, [data-testid="loaded"]', { timeout: 15000 });
-
-      // Extract or interact with data
-      const result = await page.evaluate(() => {
-        // DOM extraction placeholder
-        return { status: 'ok', data: null };
-      });
-
-      log('run_report complete', result);
-      return result;
-
+      const BASE_URL = process.env.SALESFORCE_CLASSIC_URL || 'https://na.salesforce.com';
+    // Navigate to Reports tab
+    await page.goto(`${BASE_URL}/00O?setupid=TabReports`, { waitUntil: 'networkidle2' });
+    await page.waitForSelector('.reportFolderItem, .ReportName a, .dataRow', { timeout: 15000 });
+    if (opts.reportId) {
+      await page.goto(`${BASE_URL}/${opts.reportId}?export=1&enc=UTF-8&xf=csv`);
+    } else if (opts.reportName) {
+      const link = await page.evaluateHandle((name) =>
+        Array.from(document.querySelectorAll('.ReportName a, .dataRow .titleCell a')).find(a => a.textContent.includes(name)),
+        opts.reportName
+      );
+      if (link) await link.asElement()?.click();
+      await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 });
+      await page.click('#export_btn, input[value="Export Details"]').catch(() => {});
+    }
+    return { status: 'ok', url: page.url() };
     } catch (err) {
-      // Take screenshot on error for debugging
       await page.screenshot({ path: `error-run_report-${Date.now()}.png` }).catch(() => {});
       throw err;
     }
@@ -181,27 +158,16 @@ async function mass_update_records(page, opts = {}) {
 
   return retry(async () => {
     await humanDelay(500, 1500);
-
-    // TODO: Replace selectors with actual Salesforce Classic selectors
-    // These are placeholder implementations — inspect the actual UI
-    // and update the selectors accordingly.
-
     try {
-      // Example: navigate to the relevant section
-      // await page.goto(`${process.env.SALESFORCE_CLASSIC_URL}/path/to/mass-update-records`);
-      // await page.waitForSelector('.main-content, #content, [data-testid="loaded"]', { timeout: 15000 });
-
-      // Extract or interact with data
-      const result = await page.evaluate(() => {
-        // DOM extraction placeholder
-        return { status: 'ok', data: null };
-      });
-
-      log('mass_update_records complete', result);
-      return result;
-
+      // TODO: Replace with actual Salesforce Classic selectors
+    // await page.goto(`${process.env.SALESFORCE_CLASSIC_URL}/path/to/mass-update-records`);
+    // await page.waitForSelector('.main-content, #content, [data-testid="loaded"]', { timeout: 15000 });
+    const result = await page.evaluate(() => {
+      return { status: 'ok', data: null };
+    });
+    log('mass_update_records complete', result);
+    return result;
     } catch (err) {
-      // Take screenshot on error for debugging
       await page.screenshot({ path: `error-mass_update_records-${Date.now()}.png` }).catch(() => {});
       throw err;
     }
