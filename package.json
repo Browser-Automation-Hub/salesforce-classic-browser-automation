@@ -1,7 +1,7 @@
 {
-  "name": "salesforce-classic-browser-automation",
+  "name": "@browser-automation-hub/salesforce-classic-browser-automation",
   "version": "1.0.0",
-  "description": "Browser automation for Salesforce Classic — create/update records, run reports, manage leads, and automate CRM workflows for orgs that cannot migrate to Lightning.",
+  "description": "Browser automation for Salesforce Classic — create/update records, run reports, and automate CRM workflows",
   "main": "src/actions.js",
   "scripts": {
     "start": "node examples/basic-login.js",
@@ -15,7 +15,7 @@
     "browser-automation",
     "puppeteer",
     "playwright",
-    "anchorbrowser",
+    "anchor-browser",
     "nodejs"
   ],
   "license": "MIT",
@@ -34,5 +34,8 @@
   "homepage": "https://github.com/Browser-Automation-Hub/salesforce-classic-browser-automation#readme",
   "bugs": {
     "url": "https://github.com/Browser-Automation-Hub/salesforce-classic-browser-automation/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
